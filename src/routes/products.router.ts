@@ -7,6 +7,7 @@ productsRouter
   .route('/')
   .get(productsController.getAllProducts)
   .post(productsController.createProduct)
+
 productsRouter
   .route('/:id')
   .get(productsController.getProduct)
