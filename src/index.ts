@@ -2,8 +2,14 @@ import express from 'express'
 import cors from 'cors'
 import router from './router'
 import connectDb from './db/connect'
+import rateLimit from 'express-rate-limit'
 
 const app = express()
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in one hour.',
+})
 connectDb()
 
 app.use(
@@ -13,8 +19,7 @@ app.use(
   })
 )
 
-app.use(express.json())
-
+app.use(express.json({ limit: '10kb' }))
 app.get('/', (req, res) => {
   res.status(200).json('ping pong')
 })
@@ -24,7 +29,8 @@ app.use(
   (req, res, next) => {
     next()
   },
-  router
+  router,
+  limiter
 )
 
 const { PORT = 5050 } = process.env
